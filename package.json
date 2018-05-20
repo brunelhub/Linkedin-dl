@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "Download LinkedIn Learning courses",
   "main": "index.js",
+  "bin": {
+    "ldl": "./index.js"
+  },
   "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brunelhub/Linkedin-dl.git"
+  },
   "author": "Gaëtan BRUNEL",
   "license": "MIT",
   "dependencies": {

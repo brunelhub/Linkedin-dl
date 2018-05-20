@@ -14,7 +14,7 @@ npm install -g https://github.com/brunelhub/linkedin-dl
 Call linkedin-dl with the slug (name of the course) part of the URL, the username (email address) and the password.
 
 ```sh
-linkedin-dl -s [the-course-name] -u [user@email.com] -p [password]
+ldl -s [the-course-name] -u [user@email.com] -p [password]
 ```
 
 It will then try to log into your account and start downloading the videos.

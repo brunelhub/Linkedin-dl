@@ -10,6 +10,8 @@ const colors = require('colors');
 
 /*
 TODO
+- check that data is not undefined before creating folder and iterating
+- remove ? from the titles => error downloading files
 - remove the promise part from dataListener
 - don't send '.mp4' to downloadVideo. Use 'content-type' instead
 - promisify the login process instead of waiting 2 secs
@@ -139,6 +141,11 @@ function getCourseData(result) {
   return detailedCourses;
 }
 
+function sanitizeName(name) {
+  name = name.replace(/[/\\?%*:|"<>]/g, '');
+  return name;
+}
+
 function createFolder(path) {
   return new Promise(function (resolve, reject) {
 
@@ -262,15 +269,6 @@ printHeader();
 
   // Create a listener to collect course data
   let data = {};
-  // await page.on('response', interceptedResponse => {
-  //   if (interceptedResponse.url().endsWith('slugs')) {
-  //     interceptedResponse.json().then(
-  //       function (value) {
-  //         data = getCourseData(value);
-  //       }
-  //     )
-  //   }
-  // })
   const dataListener = new Promise((resolve, reject) => {
     function handleResponse(response) {
 
@@ -293,13 +291,18 @@ printHeader();
   console.log('* Collect course data...');
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 0});
   // await page.waitFor(2000);
-  console.log('==> OK\n'.green);
-  // fs.writeFile('detailedCourses.json', JSON.stringify(courseData), 'utf8');
-
+  
+  if (data.courseTitle == undefined) {
+    console.log('==> something went wrong while collecting data'.red);
+    process.exit(0);
+  }else {
+    console.log('==> OK\n'.green);
+    // fs.writeFile('detailedCourses.json', JSON.stringify(courseData), 'utf8');
+  }
 
   console.log('[ ' + data.courseTitle + ' ]\n');
   // create course folder
-  await createFolder('./Linkedin - ' + data.courseTitle);
+  await createFolder('./Linkedin - ' + sanitizeName(data.courseTitle));
 
 
   // iterate through each chapter of the course
@@ -307,7 +310,7 @@ printHeader();
 
     console.log('  ' + chapter.chapterTitle);
     // create chapter folder
-    let path = './Linkedin - ' + data.courseTitle + '/' + chapter.chapterTitle;
+    let path = './Linkedin - ' + sanitizeName(data.courseTitle) + '/' + sanitizeName(chapter.chapterTitle);
     await createFolder(path);
 
 
@@ -316,7 +319,7 @@ printHeader();
 
       console.log('      ' + video.title);
       let url = video.url;
-      let videoPath = path + '/' + video.title + '.mp4';
+      let videoPath = path + '/' + sanitizeName(video.title) + '.mp4';
 
       // Check if video already exists
       const checkFolder = await new Promise((resolve, reject) => {

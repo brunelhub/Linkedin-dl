@@ -21,6 +21,8 @@ ldl -s [the-course-name] -u [user@email.com] -p [password]
 
 It will then try to log into your account and start downloading the videos.
 
+![linkedin-dl demo](https://raw.githubusercontent.com/brunelhub/Linkedin-dl/master/gif/linkedin-dl.gif)
+
 By default, linkedin-dl will select the biggest resolution available and create a subdirectory based on the course name.
 
 
